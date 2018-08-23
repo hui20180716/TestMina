@@ -12,6 +12,7 @@ public class App {
 			Scanner sc = new Scanner(System.in);
 			String str = sc.nextLine();
 			System.out.println(str.startsWith("8"));
+			System.out.println("0000000000000");
 		}
 	}
 }
