@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+            http://www.springframework.org/schema/beans
+            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+ 
+    <bean class="org.springframework.beans.factory.config.CustomEditorConfigurer">
+        <property name="customEditors">
+            <map>
+                <entry key="java.net.SocketAddress" value="org.apache.mina.integration.beans.InetSocketAddressEditor">
+                </entry>
+            </map>
+        </property>
+    </bean>
+ 
+    <bean id="executorFilter" class="org.apache.mina.filter.executor.ExecutorFilter" />
+    <bean id="protocolCodecFilter" class="org.apache.mina.filter.codec.ProtocolCodecFilter">
+        <constructor-arg>
+            <bean class="com.misuosi.mina.spring.SpringCodeFactory" />
+        </constructor-arg>
+    </bean>
+    <bean id="loggingFilter" class="org.apache.mina.filter.logging.LoggingFilter" />
+ 
+    <bean id="filterChainBuilder" class="org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder">
+        <property name="filters">
+            <map>
+                <entry key="executor" value-ref="executorFilter"></entry>
+                <entry key="codec" value-ref="protocolCodecFilter"></entry>
+                <entry key="logging" value-ref="loggingFilter"></entry>
+            </map>
+        </property>
+    </bean>
+ 
+    <bean id="firstServerHandler" class="com.misuosi.mina.server.FirstServerHandler" />
+ 
+    <bean id="ioAcceptor" class="org.apache.mina.transport.socket.nio.NioSocketAcceptor"
+          init-method="bind" destroy-method="unbind" >
+        <property name="defaultLocalAddress" value=":8888" />
+        <property name="handler" ref="firstServerHandler" />
+        <property name="filterChainBuilder" ref="filterChainBuilder" />
+        <property name="reuseAddress" value="true" />
+    </bean>
+ 
+    <bean id="sessionConfig" factory-bean="ioAcceptor" factory-method="getSessionConfig" >
+        <property name="bothIdleTime" value="10"/>
+        <property name="readBufferSize" value="2048" />
+    </bean>
+</beans>
