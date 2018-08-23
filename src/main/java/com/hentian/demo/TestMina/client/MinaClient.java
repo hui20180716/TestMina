@@ -48,7 +48,6 @@ public class MinaClient {
         connector.dispose();
         return true;
     }
- 
     public static void main(String[] args) {
         MinaClient client = new MinaClient();
         client.connect();
@@ -62,7 +61,6 @@ public class MinaClient {
             	readLine=t.get();
             }
             client.sendMssageToServer(readLine);
-            
         }while(!readLine.toLowerCase().equals("quit"));
         client.close();
     }
